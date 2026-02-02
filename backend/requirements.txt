@@ -1,0 +1,9 @@
+pymongo[srv]
+fastapi[standard]
+uvicorn[standard]
+pydantic
+passlib[bcrypt]
+python-jose[cryptography]
+python-dotenv
+sqlalchemy
+alembic
