@@ -1,16 +1,6 @@
-from pymongo import MongoClient
-import os
+from motor.motor_asyncio import AsyncIOMotorClient
 
-def get_database():
-    db_url = os.getenv("MONGODB_URL")
-    
-    if not db_url:
-        raise ValueError("MONGODB_URL error")
-    
-    client = MongoClient(db_url)
-    return client["final_project_db"]
+MONGO_URL = "mongodb://localhost:27017"
 
-if __name__ == "__main__":
-    
-    database = get_database()
-    print("DB work:", database)
+client = AsyncIOMotorClient(MONGO_URL)
+db = client.mydatabase
