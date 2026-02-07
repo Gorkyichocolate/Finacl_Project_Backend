@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException, Depends, Response
 from pydantic import BaseModel, EmailStr
 from authx import AuthX, AuthXConfig
 from services import geocoding
+from routes import logIn, signUp, logOut
 
 
 app = FastAPI()
