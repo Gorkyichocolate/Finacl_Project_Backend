@@ -1,0 +1,3 @@
+async def signUp(email: EmailStr, password: str):
+    ... 
+    
