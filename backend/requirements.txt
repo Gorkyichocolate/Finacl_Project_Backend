@@ -8,3 +8,4 @@ python-dotenv
 httpx
 pyjwt
 pwdlib[argon2]
+certifi

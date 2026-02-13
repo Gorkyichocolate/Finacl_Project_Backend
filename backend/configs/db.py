@@ -1,11 +1,12 @@
 import os
+import certifi
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo.errors import ConnectionFailure
 from dotenv import load_dotenv
 
 load_dotenv()
 
-MONGO_URL = os.getenv("MONGODB_URL")
+MONGO_URL = os.getenv("MONGODB_URL") or os.getenv("MONGODB_URI")
 DATABASE_NAME = os.getenv("DATABASE_NAME")
 
 client: AsyncIOMotorClient = None
@@ -15,7 +16,27 @@ db = None
 async def connect_to_mongodb():
     global client, db
     try:
-        client = AsyncIOMotorClient(MONGO_URL)
+        if not MONGO_URL:
+            raise RuntimeError(
+                "MONGODB_URL is not set. Add it in Render Environment Variables."
+            )
+
+        if not DATABASE_NAME:
+            raise RuntimeError(
+                "DATABASE_NAME is not set. Add it in Render Environment Variables."
+            )
+
+        mongo_options = {
+            "serverSelectionTimeoutMS": 30000,
+            "connectTimeoutMS": 20000,
+            "socketTimeoutMS": 20000,
+        }
+
+        if MONGO_URL.startswith("mongodb+srv://"):
+            mongo_options["tls"] = True
+            mongo_options["tlsCAFile"] = certifi.where()
+
+        client = AsyncIOMotorClient(MONGO_URL, **mongo_options)
         await client.admin.command('ping')
         db = client[DATABASE_NAME]
         print(f"✅ Подключено к MongoDB: {DATABASE_NAME}")
@@ -23,6 +44,9 @@ async def connect_to_mongodb():
         await create_indexes()
     except ConnectionFailure as e:
         print(f"Ошибка подключения к MongoDB: {e}")
+        raise
+    except Exception as e:
+        print(f"Ошибка конфигурации/подключения MongoDB: {e}")
         raise
 
 
