@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Weather Forecast Service</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body class="login-page">
+    <div class="login-container">
+        <div class="login-box">
+            <h1>Weather Forecast Service</h1>
+            <p class="subtitle">Create an account to access weather forecasts</p>
+
+            <form id="signupForm">
+                <div class="form-group">
+                    <label for="username">Username *</label>
+                    <input type="text" id="username" name="username" required placeholder="johndoe"
+                        autocomplete="username" minlength="3">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" required placeholder="user@example.com"
+                        autocomplete="email">
+                </div>
+
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" name="fullName" placeholder="John Doe" autocomplete="name">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password *</label>
+                    <input type="password" id="password" name="password" required placeholder="••••••"
+                        autocomplete="new-password" minlength="6">
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password *</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="••••••"
+                        autocomplete="new-password" minlength="6">
+                </div>
+
+                <button type="submit" class="btn-primary">Sign Up</button>
+
+                <div class="error-message" id="errorMessage"></div>
+                <div class="success-message" id="successMessage"></div>
+            </form>
+
+            <div class="login-footer">
+                <p>Already have an account? <a href="/static/html/login.html" class="link">Sign In</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/javascript/script.js"></script>
+</body>
+
+</html>

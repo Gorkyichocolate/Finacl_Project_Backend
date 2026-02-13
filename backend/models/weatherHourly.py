@@ -2,15 +2,9 @@ from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
 
-
-# ================= BASE =================
-
 class CustomBaseModel(BaseModel):
     class Config:
         extra = "ignore"
-
-
-# ================= EXTERNAL MODELS =================
 
 class Description(CustomBaseModel):
     text: str
@@ -71,8 +65,6 @@ class HourlyWeather(CustomBaseModel):
     forecastHours: List[ForecastHour]
 
 
-# ================= DTO =================
-
 class HourlyWeatherResponse(CustomBaseModel):
     time: datetime
     temperature: float
@@ -91,14 +83,10 @@ class HourlyWeatherResponse(CustomBaseModel):
     is_day: bool
 
 
-# ================= HELPERS =================
-
 def build_icon_url(icon_base: str, is_day: bool) -> str:
     suffix = ".svg" if is_day else "_dark.svg"
     return f"{icon_base}{suffix}"
 
-
-# ================= MAPPER =================
 
 def map_hour(hour: ForecastHour) -> HourlyWeatherResponse:
     return HourlyWeatherResponse(

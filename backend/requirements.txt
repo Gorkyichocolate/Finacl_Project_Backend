@@ -1,10 +1,10 @@
 pymongo[srv]
+motor
 fastapi[standard]
 uvicorn[standard]
 pydantic
-passlib[bcrypt]
-python-jose[cryptography]
+pydantic[email]
 python-dotenv
-sqlalchemy
-alembic
-authx
+httpx
+pyjwt
+pwdlib[argon2]

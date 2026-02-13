@@ -9,6 +9,8 @@ GEOCODE_URL = "https://maps.googleapis.com/maps/api/geocode/json"
 
 
 async def get_coordinates(city: str):
+    if not GOOGLE_API_KEY:
+        raise ValueError("Google API key is not configured. Please set GOOGLE_API_KEY in .env file")
 
     params = {
         "address": city,
@@ -20,8 +22,12 @@ async def get_coordinates(city: str):
 
     data = response.json()
 
-    if not data["results"]:
-        return None
+    if data.get("status") != "OK":
+        error_msg = data.get("error_message", data.get("status", "Unknown error"))
+        raise ValueError(f"Geocoding API error: {error_msg}")
+
+    if not data.get("results"):
+        raise ValueError(f"City '{city}' not found")
 
     location = data["results"][0]["geometry"]["location"]
 

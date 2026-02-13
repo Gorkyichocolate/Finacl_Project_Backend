@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Forecast Service - Weather Forecast</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+    <header>
+        <div class="header-content">
+            <div class="header-left">
+                <h1>Weather Forecast Service</h1>
+            </div>
+            <div class="header-center">
+                <input type="text" id="citySearch" placeholder="Search city..." value="Astana">
+                <button id="searchBtn" class="btn-search">Search</button>
+            </div>
+            <div class="header-right">
+                <span id="userName"></span>
+                <button id="logoutBtn" class="btn-logout">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="weather-container">
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Loading weather data...</p>
+        </div>
+
+        <section id="currentWeather" class="current-weather" style="display: none;">
+            <div class="weather-main">
+                <div class="temperature">
+                    <span id="currentTemp" class="temp-value">-22°</span>
+                    <span id="weatherIcon" class="weather-icon">🌙</span>
+                </div>
+                <div class="weather-info">
+                    <h2 id="cityName">Астана</h2>
+                    <p id="weatherDescription">Ясно. Сегодня осадков не ожидается</p>
+                    <div class="feels-like">
+                        <span>Ощущается как <strong id="feelsLike">-27°</strong></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="weather-details">
+                <div class="detail-item">
+                    <span class="detail-icon">💨</span>
+                    <span class="detail-label">Ветер</span>
+                    <span id="windSpeed" class="detail-value">1.4 м/с</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-icon">💧</span>
+                    <span class="detail-label">Влажность</span>
+                    <span id="humidity" class="detail-value">80%</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-icon">🌡️</span>
+                    <span class="detail-label">Давление</span>
+                    <span id="pressure" class="detail-value">737 мм</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="hourlyForecast" class="hourly-forecast" style="display: none;">
+            <h3>Hourly Forecast</h3>
+            <div class="hourly-scroll" id="hourlyContainer">
+            </div>
+        </section>
+
+        <section id="dailyForecast" class="daily-forecast" style="display: none;">
+            <h3>7-Day Forecast</h3>
+            <div class="daily-container" id="dailyContainer">
+            </div>
+        </section>
+
+        <div id="errorContainer" class="error-container" style="display: none;">
+            <p id="errorText"></p>
+        </div>
+    </main>
+
+    <script src="../javascript/script.js?v=20260213-1"></script>
+</body>
+
+</html>

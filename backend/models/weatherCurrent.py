@@ -48,6 +48,10 @@ class Wind(CustomBaseModel):
     speed: WindSpeed
 
 
+class AirPressure(CustomBaseModel):
+    meanSeaLevelMillibars: float
+
+
 class SunEvents(CustomBaseModel):
     sunriseTime: datetime
     sunsetTime: datetime
@@ -64,6 +68,8 @@ class CurrentWeather(CustomBaseModel):
     
     precipitation: Optional[Precipitation] = None
     wind: Optional[Wind] = None
+    relativeHumidity: Optional[int] = None
+    airPressure: Optional[AirPressure] = None
     
     sunEvents: Optional[SunEvents] = None
 
@@ -71,8 +77,12 @@ class CurrentWeatherResponse(CustomBaseModel):
     temperature: float
     feels_like: Optional[float]
     condition: str
+    condition_type: Optional[str]
+    is_day: bool
     icon: str
     precipitation_probability: Optional[int]
+    humidity: Optional[int]
+    pressure: Optional[float]
     wind_direction: Optional[str]
     wind_speed: Optional[float]
     sunrise: Optional[datetime]
@@ -87,9 +97,16 @@ def map_current(weather: CurrentWeather) -> CurrentWeatherResponse:
             if weather.feelsLikeTemperature else None
         ),
         condition=weather.weatherCondition.description.text,
+        condition_type=weather.weatherCondition.type,
+        is_day=weather.isDaytime,
         precipitation_probability=(
             weather.precipitation.probability.percent
             if weather.precipitation else None
+        ),
+        humidity=weather.relativeHumidity,
+        pressure=(
+            weather.airPressure.meanSeaLevelMillibars
+            if weather.airPressure else None
         ),
         wind_direction=(
             weather.wind.direction.cardinal
