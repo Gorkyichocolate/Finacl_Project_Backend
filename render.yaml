@@ -1,0 +1,42 @@
+services:
+  # FastAPI Backend Service
+  - type: web
+    name: weather-api
+    runtime: python
+    region: frankfurt
+    plan: free
+    branch: main
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: PORT
+        generateValue: true
+      - key: MONGODB_URI
+        fromDatabase:
+          name: weather-mongodb
+          property: connectionString
+      - key: MONGODB_DATABASE
+        value: weather_db
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALGORITHM
+        value: HS256
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: 30
+      - key: OPENWEATHER_API_KEY
+        sync: false  # Set manually in Render dashboard
+      - key: GOOGLE_API_KEY
+        sync: false  # Set manually in Render dashboard
+
+databases:
+  # MongoDB Database
+  - name: weather-mongodb
+    databaseName: weather_db
+    user: weather_user
+    region: frankfurt
+    plan: free
+    ipAllowList: []  # Allow connections from anywhere
