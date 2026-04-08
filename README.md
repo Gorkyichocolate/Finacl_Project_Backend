@@ -1,747 +1,80 @@
 # Weather Forecast Service API
 
-## 📋 Описание проекта
+## Описание
 
-Weather Forecast Service API — это полнофункциональный веб-сервис для получения прогнозов погоды с системой аутентификации пользователей. Проект использует современный стек технологий и следует лучшим практикам разработки REST API.
+Проект переведен на микросервисную архитектуру. Backend разделен на 3 сервиса:
 
----
+- `auth_service` — регистрация, логин, токены, сессия
+- `user_service` — профиль пользователя и защищенные user-эндпоинты
+- `weather_service` — погодные эндпоинты и геокодинг
 
-## 🛠️ Технологии
+## Технологии
 
-### Backend
-- **FastAPI** — современный, быстрый веб-фреймворк для создания API
-- **MongoDB** — NoSQL база данных для хранения пользователей
-- **Motor** — асинхронный драйвер MongoDB для Python
-- **PyMongo** — синхронный драйвер MongoDB
-- **Pydantic** — валидация данных и управление настройками
-- **JWT (PyJWT)** — токены для аутентификации
-- **PWDLib (Argon2)** — безопасное хеширование паролей
-- **HTTPX** — асинхронный HTTP-клиент для внешних API
-- **Uvicorn** — ASGI сервер для запуска приложения
+- FastAPI
+- MongoDB + Motor
+- Pydantic
+- JWT (PyJWT)
+- pwdlib (Argon2)
+- HTTPX
+- Uvicorn
 
-### Frontend
-- **HTML/CSS/JavaScript** — клиентская часть приложения
+## Актуальная структура
 
-### External APIs
-- **OpenWeatherMap API** — получение данных о погоде
-- **Google Geocoding API** — преобразование названий городов в координаты
-
----
-
-## 📁 Структура проекта
-
-```
+```text
 Final_Project_Backend/
-│
-├── backend/                          # Backend приложение
-│   ├── main.py                       # Точка входа приложения, настройка FastAPI
-│   ├── requirements.txt              # Зависимости проекта
-│   │
-│   ├── configs/                      # Конфигурационные файлы
-│   │   ├── __init__.py
-│   │   ├── auth_config.py            # Настройки аутентификации (JWT, токены)
-│   │   └── db.py                     # Подключение к MongoDB
-│   │
-│   ├── handlers/                     # Обработчики запросов и ошибок
-│   │   ├── __init__.py
-│   │   ├── exceptions.py             # Глобальные обработчики исключений
-│   │   ├── middleware.py             # Middleware (логирование, безопасность)
-│   │   ├── response.py               # Утилиты для формирования ответов
-│   │   └── validators.py             # Валидаторы данных
-│   │
-│   ├── models/                       # Pydantic модели
-│   │   ├── __init__.py
-│   │   ├── user_model.py             # Модель пользователя
-│   │   ├── token_model.py            # Модель токена
-│   │   ├── response_model.py         # Базовые модели ответов
-│   │   ├── rate_limit_model.py       # Модель для rate limiting
-│   │   ├── weatherCurrent.py         # Модель текущей погоды
-│   │   ├── weatherHourly.py          # Модель почасового прогноза
-│   │   └── weatherDaily.py           # Модель ежедневного прогноза
-│   │
-│   ├── repository/                   # Слой доступа к данным (Data Access Layer)
-│   │   ├── __init__.py
-│   │   ├── user.py                   # CRUD операции для пользователей
-│   │   └── weather.py                # Операции для кеширования погоды
-│   │
-│   ├── routes/                       # Маршруты API (эндпоинты)
-│   │   ├── __init__.py
-│   │   ├── signUp.py                 # Регистрация пользователя
-│   │   ├── logIn.py                  # Вход пользователя
-│   │   ├── logOut.py                 # Выход пользователя
-│   │   ├── token.py                  # Получение токена (OAuth2)
-│   │   ├── user.py                   # Операции с пользователем
-│   │   └── weather.py                # Получение прогнозов погоды
-│   │
-│   └── services/                     # Бизнес-логика приложения
-│       ├── __init__.py
-│       ├── auth.py                   # Логика аутентификации и авторизации
-│       ├── geocoding.py              # Работа с Google Geocoding API
-│       └── weather.py                # Работа с OpenWeatherMap API
-│
-├── frontend/                         # Frontend приложение
-│   ├── html/                         # HTML страницы
-│   │   ├── login.html                # Страница входа
-│   │   ├── signup.html               # Страница регистрации
-│   │   └── main.html                 # Главная страница
-│   ├── css/
-│   │   └── style.css                 # Стили
-│   └── javascript/
-│       └── script.js                 # Клиентская логика
-│
-├── init_db.py                        # Скрипт инициализации базы данных
-└── README.md                         # Документация проекта
+├── backend/
+│   ├── microservices/
+│   │   ├── auth_service/
+│   │   │   ├── main.py
+│   │   │   ├── routes/
+│   │   │   ├── services/
+│   │   │   ├── repository/
+│   │   │   ├── models/
+│   │   │   ├── configs/
+│   │   │   └── handlers/
+│   │   ├── user_service/
+│   │   │   ├── main.py
+│   │   │   ├── routes/
+│   │   │   ├── services/
+│   │   │   ├── repository/
+│   │   │   ├── models/
+│   │   │   ├── configs/
+│   │   │   └── handlers/
+│   │   └── weather_service/
+│   │       ├── main.py
+│   │       ├── routes/
+│   │       ├── services/
+│   │       ├── repository/
+│   │       ├── models/
+│   │       ├── configs/
+│   │       └── handlers/
+│   ├── Procfile
+│   ├── requirements.txt
+│   └── runtime.txt
+├── frontend/
+├── init_db.py
+├── README.md
+└── README_EN.md
 ```
 
----
+## Локальный запуск
 
-## 📦 Ответственность компонентов
+Из каталога `backend`:
 
-### 🔧 `configs/`
-- **auth_config.py** — хранит секретные ключи, алгоритмы шифрования JWT, время жизни токенов
-- **db.py** — управляет подключением к MongoDB, создает клиент базы данных
-
-### 🛡️ `handlers/`
-- **exceptions.py** — перехватывает и обрабатывает все ошибки в приложении
-- **middleware.py** — обрабатывает каждый запрос (логирование, добавление заголовков безопасности)
-- **response.py** — стандартизирует формат ответов API
-- **validators.py** — проверяет входящие данные на корректность
-
-### 📊 `models/`
-Определяют структуру данных с помощью Pydantic:
-- Валидация типов
-- Сериализация/десериализация JSON
-- Документирование API схемы
-
-### 💾 `repository/`
-Слой абстракции для работы с базой данных:
-- **user.py** — создание, поиск, обновление пользователей
-- **weather.py** — кеширование результатов запросов погоды
-
-### 🌐 `routes/`
-Определяют API эндпоинты и связывают HTTP-запросы с бизнес-логикой:
-- Обрабатывают входящие запросы
-- Вызывают сервисы для выполнения операций
-- Возвращают структурированные ответы
-
-### 🎯 `services/`
-Содержат основную бизнес-логику:
-- **auth.py** — аутентификация, создание пользователей, проверка прав доступа
-- **geocoding.py** — получение координат города через Google API
-- **weather.py** — получение данных о погоде через OpenWeatherMap API
-
----
-
-## 🔐 API Эндпоинты
-
-### Базовый URL
-```
-http://localhost:8000
-```
-
----
-
-### 🔑 Аутентификация
-
-#### 1. **Регистрация пользователя**
-```http
-POST /signup
-```
-
-**Тело запроса:**
-```json
-{
-  "username": "john_doe",
-  "email": "john@example.com",
-  "password": "SecurePassword123!",
-  "full_name": "John Doe"
-}
-```
-
-**Ответ:**
-```json
-{
-  "username": "john_doe",
-  "email": "john@example.com",
-  "full_name": "John Doe",
-  "disabled": false
-}
-```
-
----
-
-#### 2. **Вход (получение токена)**
-```http
-POST /login
-```
-
-**Тело запроса:**
-```json
-{
-  "username": "john_doe",
-  "password": "SecurePassword123!",
-  "scopes": ["me", "items", "weather"]
-}
-```
-
-**Ответ:**
-```json
-{
-  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "token_type": "bearer",
-  "expires_in": 1800,
-  "user": {
-    "username": "john_doe",
-    "email": "john@example.com",
-    "full_name": "John Doe",
-    "disabled": false
-  }
-}
-```
-
----
-
-#### 3. **OAuth2 токен (для Swagger UI)**
-```http
-POST /token
-Content-Type: application/x-www-form-urlencoded
-```
-
-**Параметры формы:**
-```
-username=john_doe
-password=SecurePassword123!
-scope=me weather
-```
-
-**Ответ:**
-```json
-{
-  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "token_type": "bearer"
-}
-```
-
----
-
-#### 4. **Выход**
-```http
-POST /logout
-Authorization: Bearer <your_token>
-```
-
-**Ответ:**
-```json
-{
-  "message": "Выход выполнен успешно. Удалите токен на клиенте.",
-  "username": "john_doe"
-}
-```
-
----
-
-#### 5. **Проверка сессии**
-```http
-GET /session
-Authorization: Bearer <your_token>
-```
-
-**Ответ:**
-```json
-{
-  "username": "john_doe",
-  "email": "john@example.com",
-  "full_name": "John Doe",
-  "is_active": true,
-  "message": "Сессия активна"
-}
-```
-
----
-
-### 👤 Пользователь
-
-#### 6. **Получить информацию о текущем пользователе**
-```http
-GET /users/me
-Authorization: Bearer <your_token>
-```
-
-**Ответ:**
-```json
-{
-  "username": "john_doe",
-  "email": "john@example.com",
-  "full_name": "John Doe",
-  "disabled": false
-}
-```
-
----
-
-#### 7. **Получить статус системы**
-```http
-GET /users/status
-Authorization: Bearer <your_token>
-```
-
-**Ответ:**
-```json
-{
-  "status": "ok",
-  "user": "john_doe"
-}
-```
-
----
-
-### 🌦️ Погода
-
-> **⚠️ Все эндпоинты погоды требуют токен с scope `weather`**
-
-#### 8. **Получить текущую погоду**
-```http
-GET /weather/current?city=London
-Authorization: Bearer <your_token>
-```
-
-**Ответ:**
-```json
-{
-  "city": "London",
-  "country": "GB",
-  "timestamp": 1644840000,
-  "datetime": "2022-02-14T12:00:00Z",
-  "temperature": 8.5,
-  "feels_like": 6.2,
-  "temp_min": 7.0,
-  "temp_max": 10.0,
-  "pressure": 1013,
-  "humidity": 75,
-  "description": "облачно с прояснениями",
-  "icon": "02d",
-  "wind_speed": 4.5,
-  "wind_deg": 240,
-  "clouds": 40,
-  "visibility": 10000
-}
-```
-
----
-
-#### 9. **Получить почасовой прогноз (12 часов)**
-```http
-GET /weather/hourly-12?city=London
-Authorization: Bearer <your_token>
-```
-
-**Ответ:** Массив из 12 почасовых прогнозов
-```json
-[
-  {
-    "timestamp": 1644840000,
-    "datetime": "2022-02-14T12:00:00Z",
-    "temperature": 8.5,
-    "feels_like": 6.2,
-    "description": "облачно",
-    "icon": "03d",
-    "wind_speed": 4.5,
-    "humidity": 75,
-    "pop": 0.2
-  },
-  ...
-]
-```
-
----
-
-#### 10. **Получить прогноз на завтра**
-```http
-GET /weather/tomorrow?city=London
-Authorization: Bearer <your_token>
-```
-
-**Ответ:**
-```json
-{
-  "date": "2022-02-15",
-  "temp_day": 10.5,
-  "temp_min": 7.0,
-  "temp_max": 12.0,
-  "temp_night": 6.5,
-  "temp_eve": 9.0,
-  "temp_morn": 7.5,
-  "feels_like_day": 9.0,
-  "feels_like_night": 5.0,
-  "pressure": 1015,
-  "humidity": 70,
-  "description": "ясно",
-  "icon": "01d",
-  "wind_speed": 3.5,
-  "wind_deg": 200,
-  "clouds": 10,
-  "pop": 0.1
-}
-```
-
----
-
-#### 11. **Получить прогноз на 3 дня**
-```http
-GET /weather/forecast-3days?city=London
-Authorization: Bearer <your_token>
-```
-
-**Ответ:** Массив из 3 дневных прогнозов
-
----
-
-#### 12. **Получить прогноз на 7 дней**
-```http
-GET /weather/forecast-7days?city=London
-Authorization: Bearer <your_token>
-```
-
-**Ответ:** Массив из 7 дневных прогнозов
-
----
-
-### 🗺️ Геокодирование
-
-#### 13. **Получить координаты города**
-```http
-GET /coordinates?city=London
-```
-
-**Ответ:**
-```json
-{
-  "city": "London",
-  "country": "UK",
-  "lat": 51.5074,
-  "lon": -0.1278
-}
-```
-
----
-
-## 🚀 Установка и запуск
-
-### 1. Клонировать репозиторий
 ```bash
-git clone <repository_url>
-cd Finacl_Project_Backend
+uvicorn microservices.auth_service.main:app --host 0.0.0.0 --port 8001 --reload
+uvicorn microservices.user_service.main:app --host 0.0.0.0 --port 8002 --reload
+uvicorn microservices.weather_service.main:app --host 0.0.0.0 --port 8003 --reload
 ```
 
-### 2. Создать виртуальное окружение
-```bash
-python3 -m venv venv
-source venv/bin/activate  # Linux/Mac
-# или
-venv\Scripts\activate  # Windows
+## Render
+
+Текущий `Procfile` настроен на запуск auth-сервиса:
+
+```text
+web: uvicorn microservices.auth_service.main:app --host 0.0.0.0 --port ${PORT:-8000}
 ```
 
-### 3. Установить зависимости
-```bash
-pip install -r backend/requirements.txt
-```
+## Примечание
 
-### 4. Настроить переменные окружения
-Создайте файл `.env` в корневой директории:
-
-```env
-# MongoDB
-MONGODB_URI=mongodb://localhost:27017
-MONGODB_DATABASE=weather_db
-
-# JWT
-SECRET_KEY=your-secret-key-here
-ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=30
-
-# OpenWeatherMap API
-OPENWEATHER_API_KEY=your-openweather-api-key
-
-# Google Geocoding API
-GOOGLE_API_KEY=your-google-api-key
-```
-
-### 5. Инициализировать базу данных
-```bash
-python init_db.py
-```
-
-### 6. Запустить сервер
-```bash
-cd backend
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
-```
-
-### 7. Открыть документацию API
-- **Swagger UI:** http://localhost:8000/docs
-- **ReDoc:** http://localhost:8000/redoc
-
----
-
-## 📝 Примеры использования
-
-### С помощью cURL
-
-#### Регистрация
-```bash
-curl -X POST "http://localhost:8000/signup" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "username": "testuser",
-    "email": "test@example.com",
-    "password": "TestPass123!",
-    "full_name": "Test User"
-  }'
-```
-
-#### Вход и получение токена
-```bash
-curl -X POST "http://localhost:8000/login" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "username": "testuser",
-    "password": "TestPass123!",
-    "scopes": ["me", "weather"]
-  }'
-```
-
-#### Получение текущей погоды
-```bash
-TOKEN="your_access_token_here"
-
-curl -X GET "http://localhost:8000/weather/current?city=Moscow" \
-  -H "Authorization: Bearer $TOKEN"
-```
-
----
-
-### С помощью Python (httpx)
-
-```python
-import httpx
-import asyncio
-
-async def main():
-    async with httpx.AsyncClient() as client:
-        # Регистрация
-        signup_response = await client.post(
-            "http://localhost:8000/signup",
-            json={
-                "username": "pythonuser",
-                "email": "python@example.com",
-                "password": "PythonPass123!",
-                "full_name": "Python User"
-            }
-        )
-        print(signup_response.json())
-        
-        # Вход
-        login_response = await client.post(
-            "http://localhost:8000/login",
-            json={
-                "username": "pythonuser",
-                "password": "PythonPass123!",
-                "scopes": ["me", "weather"]
-            }
-        )
-        token = login_response.json()["access_token"]
-        
-        # Получение погоды
-        weather_response = await client.get(
-            "http://localhost:8000/weather/current",
-            params={"city": "Paris"},
-            headers={"Authorization": f"Bearer {token}"}
-        )
-        print(weather_response.json())
-
-asyncio.run(main())
-```
-
----
-
-## 🔒 Безопасность
-
-### Реализованные механизмы:
-- ✅ **JWT токены** для аутентификации
-- ✅ **Argon2** для хеширования паролей
-- ✅ **OAuth2 с scopes** для детальной авторизации
-- ✅ **CORS middleware** для контроля доступа
-- ✅ **Security Headers** (CSP, X-Frame-Options, и т.д.)
-- ✅ **Request Logging** для мониторинга
-- ✅ **Валидация данных** через Pydantic
-
-### Scopes:
-- `me` — доступ к информации о пользователе
-- `items` — доступ к элементам пользователя
-- `weather` — доступ к данным о погоде
-
----
-
-## 🧪 Тестирование
-
-### Через Swagger UI
-1. Откройте http://localhost:8000/docs
-2. Нажмите "Authorize" в правом верхнем углу
-3. Используйте эндпоинт `/token` для получения токена
-4. Введите токен в форму авторизации
-5. Тестируйте эндпоинты через интерфейс
-
----
-
-## 📊 Архитектурные решения
-
-### Слоистая архитектура:
-```
-Routes (API Layer)
-    ↓
-Services (Business Logic)
-    ↓
-Repository (Data Access)
-    ↓
-Database (MongoDB)
-```
-
-### Преимущества:
-- **Разделение ответственности** — каждый слой решает свою задачу
-- **Легкость тестирования** — можно тестировать каждый слой отдельно
-- **Гибкость** — легко заменить базу данных или внешний API
-- **Масштабируемость** — можно добавлять новые функции без изменения существующего кода
-
----
-
-## 🐛 Обработка ошибок
-
-Все ошибки возвращаются в стандартизированном формате:
-
-```json
-{
-  "detail": "Описание ошибки",
-  "status_code": 404
-}
-```
-
-### Коды состояния:
-- `200` — Успешный запрос
-- `201` — Ресурс создан
-- `400` — Неверный запрос
-- `401` — Не авторизован
-- `403` — Доступ запрещен
-- `404` — Ресурс не найден
-- `500` — Внутренняя ошибка сервера
-
----
-
-## 🌐 Деплой на Render
-
-Проект готов к автоматическому развертыванию на [Render](https://render.com) с использованием Blueprint.
-
-### Быстрый деплой
-
-1. **Создайте аккаунт на Render**
-   - Зарегистрируйтесь на https://render.com
-
-2. **Подключите Git репозиторий**
-   - Push ваш код в GitHub/GitLab
-   - В Render Dashboard нажмите "New" → "Blueprint"
-
-3. **Выберите репозиторий**
-   - Render автоматически обнаружит `render.yaml` в корне проекта
-
-4. **Настройте API ключи**
-   После создания сервиса, добавьте в Environment Variables:
-   ```
-   OPENWEATHER_API_KEY=ваш_openweather_api_ключ
-   GOOGLE_API_KEY=ваш_google_api_ключ
-   ```
-
-5. **Деплой запустится автоматически!**
-
-### Что включено в render.yaml
-
-```yaml
-services:
-  - Web Service (FastAPI backend)
-    - Автоматическая сборка из requirements.txt
-    - Health checks
-    - Auto-deploy при push в main
-
-databases:
-  - MongoDB (managed database)
-    - Автоматическое подключение к backend
-    - Free tier доступен
-```
-
-### Альтернатива: Ручной деплой
-
-Если не используете Blueprint:
-
-1. **Создайте Web Service**
-   - Build Command: `pip install -r requirements.txt`
-   - Start Command: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-   - Root Directory: `backend`
-
-2. **Создайте MongoDB**
-   - Создайте новую MongoDB в Render
-   - Скопируйте Connection String
-
-3. **Настройте Environment Variables**
-   ```
-   MONGODB_URI=mongodb+srv://...
-   MONGODB_DATABASE=weather_db
-   SECRET_KEY=генерируемый_секретный_ключ
-   ALGORITHM=HS256
-   ACCESS_TOKEN_EXPIRE_MINUTES=30
-   OPENWEATHER_API_KEY=ваш_ключ
-   GOOGLE_API_KEY=ваш_ключ
-   ```
-
-### После деплоя
-
-Ваш API будет доступен по адресу:
-```
-https://weather-api.onrender.com
-```
-
-Документация:
-- Swagger: https://weather-api.onrender.com/docs
-- ReDoc: https://weather-api.onrender.com/redoc
-
-### Важные замечания
-
-⚠️ **Free tier ограничения:**
-- Сервис "засыпает" после 15 минут неактивности
-- Первый запрос после сна может занять 30-50 секунд
-- 750 часов работы в месяц
-
-💡 **Для production:**
-- Используйте платный план для 24/7 работы
-- Настройте custom domain
-- Включите автоматические бэкапы MongoDB
-- Используйте MongoDB Atlas для большей надежности
-
----
-
-## 📚 Дополнительные ресурсы
-
-- [FastAPI Documentation](https://fastapi.tiangolo.com/)
-- [MongoDB Documentation](https://www.mongodb.com/docs/)
-- [OpenWeatherMap API](https://openweathermap.org/api)
-- [JWT.io](https://jwt.io/)
-- [Render Documentation](https://render.com/docs)
-
----
-
-## 👨‍💻 Автор
-
-Проект разработан в рамках финального проекта курса по веб-разработке.
-
----
-
-## 📄 Лицензия
-
-MIT License
+Старый монолитный backend (`main.py`, `routes/`, `services/`, `models/`, `repository/`, `configs/`, `handlers/`) удален как неиспользуемый.
