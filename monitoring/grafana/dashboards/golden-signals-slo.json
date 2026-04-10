@@ -1,0 +1,388 @@
+{
+    "annotations": {
+        "list": [
+            {
+                "builtIn": 1,
+                "datasource": {
+                    "type": "grafana",
+                    "uid": "-- Grafana --"
+                },
+                "enable": true,
+                "hide": true,
+                "iconColor": "rgba(0, 211, 255, 1)",
+                "name": "Annotations & Alerts",
+                "type": "dashboard"
+            }
+        ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": null,
+    "links": [],
+    "liveNow": false,
+    "panels": [
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "red",
+                                "value": null
+                            },
+                            {
+                                "color": "yellow",
+                                "value": 99
+                            },
+                            {
+                                "color": "green",
+                                "value": 99.5
+                            }
+                        ]
+                    },
+                    "unit": "percent"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 6,
+                "x": 0,
+                "y": 0
+            },
+            "id": 1,
+            "options": {
+                "colorMode": "value",
+                "graphMode": "area",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "fields": "",
+                    "values": false
+                },
+                "textMode": "auto"
+            },
+            "pluginVersion": "11.0.0",
+            "targets": [
+                {
+                    "editorMode": "code",
+                    "expr": "100 * (sum(increase(http_requests_total{job=~\"backend|auth_service|user_service|weather_service\",status!~\"5..\"}[30d])) / sum(increase(http_requests_total{job=~\"backend|auth_service|user_service|weather_service\"}[30d])))",
+                    "legendFormat": "SLO Compliance",
+                    "range": true,
+                    "refId": "A"
+                }
+            ],
+            "title": "SLO Compliance (30d Availability)",
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "yellow",
+                                "value": 50
+                            },
+                            {
+                                "color": "red",
+                                "value": 75
+                            }
+                        ]
+                    },
+                    "unit": "percent"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 6,
+                "x": 6,
+                "y": 0
+            },
+            "id": 2,
+            "options": {
+                "colorMode": "value",
+                "graphMode": "none",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "fields": "",
+                    "values": false
+                },
+                "textMode": "auto"
+            },
+            "pluginVersion": "11.0.0",
+            "targets": [
+                {
+                    "editorMode": "code",
+                    "expr": "100 - (100 * (sum(increase(http_requests_total{job=~\"backend|auth_service|user_service|weather_service\",status!~\"5..\"}[30d])) / sum(increase(http_requests_total{job=~\"backend|auth_service|user_service|weather_service\"}[30d]))))",
+                    "legendFormat": "Error Budget Burned",
+                    "range": true,
+                    "refId": "A"
+                }
+            ],
+            "title": "Error Budget Burned (30d)",
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "mappings": [],
+                    "unit": "reqps"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 9,
+                "w": 12,
+                "x": 12,
+                "y": 0
+            },
+            "id": 3,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "pluginVersion": "11.0.0",
+            "targets": [
+                {
+                    "editorMode": "code",
+                    "expr": "sum(rate(http_requests_total{job=~\"backend|auth_service|user_service|weather_service\"}[5m])) by (job)",
+                    "legendFormat": "{{job}}",
+                    "range": true,
+                    "refId": "A"
+                }
+            ],
+            "title": "Traffic (RPS)",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "mappings": [],
+                    "unit": "s"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 9,
+                "w": 12,
+                "x": 0,
+                "y": 8
+            },
+            "id": 4,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "pluginVersion": "11.0.0",
+            "targets": [
+                {
+                    "editorMode": "code",
+                    "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job=~\"backend|auth_service|user_service|weather_service\"}[5m])) by (le, job))",
+                    "legendFormat": "{{job}} p95",
+                    "range": true,
+                    "refId": "A"
+                }
+            ],
+            "title": "Latency p95 (s)",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "mappings": [],
+                    "unit": "percent"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 9,
+                "w": 12,
+                "x": 12,
+                "y": 9
+            },
+            "id": 5,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "pluginVersion": "11.0.0",
+            "targets": [
+                {
+                    "editorMode": "code",
+                    "expr": "100 * sum(rate(http_requests_total{job=~\"backend|auth_service|user_service|weather_service\",status=~\"5..\"}[5m])) by (job) / clamp_min(sum(rate(http_requests_total{job=~\"backend|auth_service|user_service|weather_service\"}[5m])) by (job), 1e-9)",
+                    "legendFormat": "{{job}} 5xx %",
+                    "range": true,
+                    "refId": "A"
+                }
+            ],
+            "title": "Errors (5xx Rate %)",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "mappings": [],
+                    "unit": "percent"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 9,
+                "w": 24,
+                "x": 0,
+                "y": 17
+            },
+            "id": 6,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "pluginVersion": "11.0.0",
+            "targets": [
+                {
+                    "editorMode": "code",
+                    "expr": "100 - (avg by (instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+                    "legendFormat": "CPU Used {{instance}}",
+                    "range": true,
+                    "refId": "A"
+                },
+                {
+                    "editorMode": "code",
+                    "expr": "(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100",
+                    "legendFormat": "Memory Used {{instance}}",
+                    "range": true,
+                    "refId": "B"
+                }
+            ],
+            "title": "Saturation (CPU/Memory %)",
+            "type": "timeseries"
+        }
+    ],
+    "refresh": "15s",
+    "schemaVersion": 39,
+    "style": "dark",
+    "tags": [
+        "sre",
+        "golden-signals",
+        "slo"
+    ],
+    "templating": {
+        "list": [
+            {
+                "hide": 0,
+                "includeAll": false,
+                "label": "DS_PROMETHEUS",
+                "multi": false,
+                "name": "DS_PROMETHEUS",
+                "options": [],
+                "query": "prometheus",
+                "refresh": 1,
+                "regex": "",
+                "skipUrlSync": false,
+                "type": "datasource"
+            }
+        ]
+    },
+    "time": {
+        "from": "now-30d",
+        "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "browser",
+    "title": "Golden Signals + SLO",
+    "uid": "golden-signals-slo",
+    "version": 1,
+    "weekStart": ""
+}

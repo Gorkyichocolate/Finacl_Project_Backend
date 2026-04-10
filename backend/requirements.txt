@@ -9,3 +9,5 @@ httpx
 pyjwt
 pwdlib[argon2]
 certifi
+prometheus-client
+prometheus-fastapi-instrumentator

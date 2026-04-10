@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from prometheus_fastapi_instrumentator import Instrumentator
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from microservices.weather_service.configs.db import close_mongodb_connection, connect_to_mongodb
@@ -31,6 +32,12 @@ app = FastAPI(
     description="Weather data microservice",
     version="1.0.0",
     lifespan=lifespan,
+)
+
+Instrumentator(excluded_handlers=["/metrics"]).instrument(app).expose(
+    app,
+    include_in_schema=False,
+    should_gzip=True,
 )
 
 app.add_exception_handler(StarletteHTTPException, http_exception_handler)

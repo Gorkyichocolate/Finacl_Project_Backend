@@ -1,0 +1,27 @@
+groups:
+  - name: project-alerts
+    rules:
+      - alert: HighBackendErrorRate
+        expr: |
+          (
+            sum(rate(http_requests_total{job="backend",status=~"5.."}[5m]))
+            /
+            clamp_min(sum(rate(http_requests_total{job="backend"}[5m])), 0.001)
+          ) * 100 > 2
+        for: 2m
+        labels:
+          severity: warning
+          service: backend
+        annotations:
+          summary: "Backend error rate is high"
+          description: "5xx error rate for backend is above 2% for at least 2 minutes."
+
+      - alert: BackendDown
+        expr: up{job="backend"} == 0
+        for: 30s
+        labels:
+          severity: critical
+          service: backend
+        annotations:
+          summary: "Backend target is down"
+          description: "Prometheus cannot scrape backend:8000/metrics for 30 seconds."

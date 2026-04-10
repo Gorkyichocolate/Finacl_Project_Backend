@@ -1,0 +1,144 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: fp_frontend
+    restart: unless-stopped
+    depends_on:
+      - auth_service
+      - user_service
+      - weather_service
+    ports:
+      - "3000:80"
+
+  auth_service:
+    build:
+      context: ./backend
+      dockerfile: microservices/auth_service/Dockerfile
+    container_name: fp_auth_service
+    restart: unless-stopped
+    environment:
+      MONGODB_URL: mongodb://mongo:27017
+      DATABASE_NAME: weather_app
+      SECRET_KEY: 09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7
+    depends_on:
+      mongo:
+        condition: service_healthy
+    ports:
+      - "8001:8001"
+
+  user_service:
+    build:
+      context: ./backend
+      dockerfile: microservices/user_service/Dockerfile
+    container_name: fp_user_service
+    restart: unless-stopped
+    environment:
+      MONGODB_URL: mongodb://mongo:27017
+      DATABASE_NAME: weather_app
+      SECRET_KEY: 09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7
+    depends_on:
+      mongo:
+        condition: service_healthy
+    ports:
+      - "8002:8002"
+
+  weather_service:
+    build:
+      context: ./backend
+      dockerfile: microservices/weather_service/Dockerfile
+    container_name: fp_weather_service
+    restart: unless-stopped
+    environment:
+      MONGODB_URL: mongodb://mongo:27017
+      DATABASE_NAME: weather_app
+      SECRET_KEY: 09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7
+      GOOGLE_API_KEY: your-google-api-key-here
+    depends_on:
+      mongo:
+        condition: service_healthy
+    ports:
+      - "8003:8003"
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: fp_backend
+    restart: unless-stopped
+    environment:
+      MONGODB_URL: mongodb://mongo:27017
+      DATABASE_NAME: weather_app
+      SECRET_KEY: 09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7
+      GOOGLE_API_KEY: your-google-api-key-here
+      APP_MODULE: microservices.auth_service.main:app
+      PORT: "8000"
+    depends_on:
+      mongo:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+
+  mongo:
+    image: mongo:7
+    container_name: fp_mongo
+    restart: unless-stopped
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    container_name: fp_prometheus
+    restart: unless-stopped
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/prometheus/alert_rules.yml:/etc/prometheus/alert_rules.yml:ro
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.enable-lifecycle"
+    depends_on:
+      - backend
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    container_name: fp_grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./monitoring/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    ports:
+      - "3001:3000"
+
+  node-exporter:
+    image: prom/node-exporter:v1.8.2
+    container_name: fp_node_exporter
+    restart: unless-stopped
+    command:
+      - "--path.rootfs=/host"
+    volumes:
+      - /:/host:ro,rslave
+    ports:
+      - "9100:9100"
+
+volumes:
+  mongo_data:
+  grafana_data:

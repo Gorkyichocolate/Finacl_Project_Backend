@@ -1,4 +1,7 @@
-const API_BASE_URL = 'http://127.0.0.1:8000';
+const API_HOST = window.location.hostname || '127.0.0.1';
+const AUTH_API_BASE_URL = `http://${API_HOST}:8001`;
+const USER_API_BASE_URL = `http://${API_HOST}:8002`;
+const WEATHER_API_BASE_URL = `http://${API_HOST}:8003`;
 
 let accessToken = localStorage.getItem('access_token');
 let currentCity = 'Astana';
@@ -198,7 +201,7 @@ async function login(username, password) {
         formData.append('password', password);
         formData.append('scope', 'me weather');
 
-        const response = await fetch(`${API_BASE_URL}/token`, {
+        const response = await fetch(`${AUTH_API_BASE_URL}/token`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -207,7 +210,14 @@ async function login(username, password) {
         });
 
         if (!response.ok) {
-            throw new Error('Invalid username or password');
+            let message = 'Invalid username or password';
+            try {
+                const errorData = await response.json();
+                message = errorData?.detail || errorData?.error?.message || message;
+            } catch {
+                // Keep default message if response is not JSON.
+            }
+            throw new Error(message);
         }
 
         const data = await response.json();
@@ -235,7 +245,7 @@ async function signup(username, email, password, fullName = null) {
             requestBody.full_name = fullName;
         }
 
-        const response = await fetch(`${API_BASE_URL}/signup`, {
+        const response = await fetch(`${AUTH_API_BASE_URL}/signup`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -261,12 +271,12 @@ async function signup(username, email, password, fullName = null) {
 function logout() {
     accessToken = null;
     localStorage.removeItem('access_token');
-    window.location.href = '/static/html/login.html';
+    window.location.href = '/login.html';
 }
 
 async function getCurrentUser() {
     try {
-        const response = await fetch(`${API_BASE_URL}/users/me`, {
+        const response = await fetch(`${USER_API_BASE_URL}/users/me`, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
             }
@@ -293,7 +303,7 @@ async function getCurrentWeather(city) {
     console.log('Using token:', accessToken ? accessToken.substring(0, 20) + '...' : 'MISSING');
 
     const response = await fetch(
-        `${API_BASE_URL}/weather/current?city=${encodeURIComponent(city)}`,
+        `${WEATHER_API_BASE_URL}/weather/current?city=${encodeURIComponent(city)}`,
         {
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
@@ -312,7 +322,7 @@ async function getCurrentWeather(city) {
 
 async function getHourlyWeather(city) {
     const response = await fetch(
-        `${API_BASE_URL}/weather/hourly-12?city=${encodeURIComponent(city)}`,
+        `${WEATHER_API_BASE_URL}/weather/hourly-12?city=${encodeURIComponent(city)}`,
         {
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
@@ -330,7 +340,7 @@ async function getHourlyWeather(city) {
 
 async function getWeeklyWeather(city) {
     const response = await fetch(
-        `${API_BASE_URL}/weather/forecast-7days?city=${encodeURIComponent(city)}`,
+        `${WEATHER_API_BASE_URL}/weather/forecast-7days?city=${encodeURIComponent(city)}`,
         {
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
@@ -521,7 +531,7 @@ if (window.location.pathname.includes('signup.html') || document.getElementById(
                 successMessage.classList.add('show');
 
                 setTimeout(() => {
-                    window.location.href = '/static/html/login.html';
+                    window.location.href = '/login.html';
                 }, 2000);
             } catch (error) {
                 errorMessage.textContent = error.message;
@@ -549,7 +559,7 @@ if (window.location.pathname.includes('login.html') || document.getElementById('
                 console.log('Login successful, token saved');
 
                 setTimeout(() => {
-                    window.location.href = '/static/html/main.html';
+                    window.location.href = '/main.html';
                 }, 100);
             } catch (error) {
                 errorMessage.textContent = error.message;
@@ -567,7 +577,7 @@ if (window.location.pathname.includes('main.html') || document.getElementById('c
 
     if (!accessToken) {
         console.warn('Token not found, redirecting to login');
-        window.location.href = '/static/html/login.html';
+        window.location.href = '/login.html';
     } else {
         console.log('Token found, loading data...');
 
