@@ -132,7 +132,7 @@ services:
     image: prom/node-exporter:v1.8.2
     container_name: fp_node_exporter
     restart: unless-stopped
-    command:
+    command:  
       - "--path.rootfs=/host"
     volumes:
       - /:/host:ro,rslave

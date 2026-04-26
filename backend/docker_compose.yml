@@ -27,7 +27,7 @@ services:
       mongo:
         condition: service_healthy
     ports:
-      - "8001:8001"
+      - "9001:9001"
 
   user_service:
     build:
@@ -43,7 +43,7 @@ services:
       mongo:
         condition: service_healthy
     ports:
-      - "8002:8002"
+      - "9002:9002"
 
   weather_service:
     build:
@@ -60,7 +60,7 @@ services:
       mongo:
         condition: service_healthy
     ports:
-      - "8003:8003"
+      - "9003:9003"
 
   prometheus:
     image: prom/prometheus:v2.54.1
