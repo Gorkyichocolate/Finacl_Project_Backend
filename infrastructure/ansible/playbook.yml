@@ -1,0 +1,13 @@
+- name: Update frontend page
+  hosts: local
+
+  tasks:
+    - name: Update index.html
+      copy:
+        content: "<h1>UPDATED VERSION</h1>"
+        dest: ../../frontend/html/main.html
+      register: file_result
+
+    - name: Restart frontend container
+      command: docker restart fp_frontend
+      when: file_result.changed
